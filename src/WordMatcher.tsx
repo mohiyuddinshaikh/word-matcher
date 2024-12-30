@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./WordMatcher.scss";
 import { generate } from "random-words";
 
@@ -150,7 +150,7 @@ export default function WordMatcher({}: Props) {
         </>
       ) : null}
       <div className="board">
-        {board?.map((boardCell, index) => {
+        {board?.map((boardCell) => {
           return <div className="boardCell">{boardCell}</div>;
         })}
       </div>
