@@ -216,6 +216,7 @@ export default function WordMatcher({}: Props) {
       </div>
       <Modal isOpen={isInstructionsModalOpen} title="Word Match">
         <p>Type the displayed words as quickly as you can.</p>
+        <p>Press Enter to submit a word.</p>
         <p>Number of letters in each word is your score</p>
         <p>The game ends when the word grid fills up.</p>
         <div className="btnContainer">
