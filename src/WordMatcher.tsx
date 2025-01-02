@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import "./WordMatcher.scss";
 import { generate } from "random-words";
 import Modal from "./components/Modal";
+import Board from "./components/Board";
+import Scoreboard from "./components/Scoreboard";
+import GameOver from "./components/GameOver";
+import WordInput from "./components/WordInput";
 
 type Props = {};
 
@@ -189,32 +193,6 @@ export default function WordMatcher({}: Props) {
     setIsInstructionsModalOpen(true);
   }
 
-  const filledBlocks = () => {
-    return board.filter((item) => item != "").length;
-  };
-
-  const escapeRegExp = (string: string) => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  };
-
-  const getHighlightedText = (word: string, input: string) => {
-    const sanitizedInput = escapeRegExp(input);
-    const regex = new RegExp(`(${sanitizedInput})`, "gi");
-    return word.split(regex).map((part, index) => (
-      <span
-        key={index}
-        style={{
-          color:
-            part.toLowerCase() === sanitizedInput.toLowerCase()
-              ? "limegreen"
-              : "white",
-        }}
-      >
-        {part}
-      </span>
-    ));
-  };
-
   const handleStartGame = () => {
     setIsInstructionsModalOpen(false);
     setStartGame(true);
@@ -225,49 +203,16 @@ export default function WordMatcher({}: Props) {
     <div className="wordMatchContainer">
       <div className="gameName">Word Match</div>
       <div className="gameContainer">
-        <div className="scoreboard">
-          <div className="rowOne">
-            <div className="score">Score: {score}</div>
-            <div className="time">
-              Filled: {filledBlocks()}/{board.length}
-            </div>
-          </div>
-          <div className="rowTwo">
-            <div className="time">Time: {time}</div>
-            <div className="score">Speed: {speed}x</div>
-          </div>
-        </div>
-        {isGameOver ? (
-          <>
-            <div className="gameOver">Game Over! Your score is {score}</div>
-            <button className="resetButton" type="reset" onClick={resetGame}>
-              Reset
-            </button>
-          </>
-        ) : null}
-        <div className="board">
-          {board?.map((boardCell, index) => {
-            return (
-              <div className="boardCell" key={index}>
-                {currentWord
-                  ? getHighlightedText(boardCell, currentWord)
-                  : boardCell}
-              </div>
-            );
-          })}
-        </div>
-        <div className="textBox">
-          <input
-            ref={inputRef}
-            type="text"
-            name="newword"
-            onChange={handleAddWord}
-            onKeyDown={handleKeyDown}
-            value={currentWord}
-            disabled={isGameOver}
-            placeholder="Press Enter to Send"
-          />
-        </div>
+        <Scoreboard score={score} time={time} speed={speed} board={board} />
+        {isGameOver ? <GameOver score={score} resetGame={resetGame} /> : null}
+        <Board board={board} currentWord={currentWord} />
+        <WordInput
+          inputRef={inputRef}
+          handleAddWord={handleAddWord}
+          handleKeyDown={handleKeyDown}
+          currentWord={currentWord}
+          isGameOver={isGameOver}
+        />
       </div>
       <Modal
         isOpen={isInstructionsModalOpen}
