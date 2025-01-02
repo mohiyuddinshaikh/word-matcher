@@ -214,11 +214,7 @@ export default function WordMatcher({}: Props) {
           isGameOver={isGameOver}
         />
       </div>
-      <Modal
-        isOpen={isInstructionsModalOpen}
-        onClose={() => setIsInstructionsModalOpen(false)}
-        title="Word Match"
-      >
+      <Modal isOpen={isInstructionsModalOpen} title="Word Match">
         <p>Type the displayed words as quickly as you can.</p>
         <p>Number of letters in each word is your score</p>
         <p>The game ends when the word grid fills up.</p>

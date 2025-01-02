@@ -50,6 +50,11 @@
       flex-direction: column;
       gap: 10px;
 
+      .finalScore {
+        font-size: 25px;
+        color: limegreen;
+      }
+
       .resetButton {
         background-color: transparent;
         border: 2px solid white;
