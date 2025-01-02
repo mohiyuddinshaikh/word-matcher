@@ -240,7 +240,7 @@ export default function WordMatcher({}: Props) {
         {isGameOver ? (
           <>
             <div className="gameOver">Game Over! Your score is {score}</div>
-            <button type="reset" onClick={resetGame}>
+            <button className="resetButton" type="reset" onClick={resetGame}>
               Reset
             </button>
           </>

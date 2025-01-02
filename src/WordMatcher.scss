@@ -45,6 +45,14 @@
       }
     }
 
+    .resetButton {
+      background-color: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
     .textBox {
       margin-top: 20px;
 
@@ -69,7 +77,6 @@
   button {
     background-color: #15202b;
     color: white;
-    cursor: pointer;
     border: none;
     padding: 10px;
     border-radius: 5px;
