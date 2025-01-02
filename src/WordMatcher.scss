@@ -2,11 +2,16 @@
   width: 100%;
   min-height: 100vh;
   box-sizing: border-box;
-  background-color: #121212;
+  background-color: #15202b;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px;
+  padding: 30px;
+
+  .gameName {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
 
   .gameContainer {
     display: flex;
@@ -57,8 +62,26 @@
     }
   }
 }
+.btnContainer {
+  display: flex;
+  justify-content: end;
+
+  button {
+    background-color: #15202b;
+    color: white;
+    cursor: pointer;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+  }
+}
 
 body {
   margin: 0;
   color: white;
+  font-family: "Segoe UI";
+}
+
+button {
+  cursor: pointer;
 }

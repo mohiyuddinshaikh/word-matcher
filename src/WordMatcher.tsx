@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./WordMatcher.scss";
 import { generate } from "random-words";
+import Modal from "./components/Modal";
 
 type Props = {};
 
@@ -22,12 +23,18 @@ export default function WordMatcher({}: Props) {
   const [currentWord, setCurrentWord] = useState<string>("");
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [speed, setSpeed] = useState(1);
+  const [startGame, setStartGame] = useState<boolean>(false);
+  const [isInstructionsModalOpen, setIsInstructionsModalOpen] =
+    useState<boolean>(true);
 
   const inputRef = useRef<null | HTMLInputElement>(null);
 
   const MAX_SPEED = 3;
 
   useEffect(() => {
+    if (!startGame) {
+      return;
+    }
     const wordInterval = setInterval(() => {
       if (isGameOver) {
         clearInterval(wordInterval);
@@ -48,11 +55,7 @@ export default function WordMatcher({}: Props) {
       clearInterval(wordInterval);
       clearInterval(timeInterval);
     };
-  }, [isGameOver, speed]);
-
-  useEffect(() => {
-    inputRef?.current?.focus();
-  }, []);
+  }, [startGame, isGameOver, speed]);
 
   const speedOfWords = () => {
     return (MAX_SPEED + 1 - speed) * 1000;
@@ -95,6 +98,7 @@ export default function WordMatcher({}: Props) {
 
   function endGame() {
     setIsGameOver(true);
+    setStartGame(false);
   }
 
   function generateRandomNumber() {
@@ -181,6 +185,8 @@ export default function WordMatcher({}: Props) {
     setTime(0);
     setCurrentWord("");
     setIsGameOver(false);
+    setSpeed(1);
+    setIsInstructionsModalOpen(true);
   }
 
   const filledBlocks = () => {
@@ -209,8 +215,15 @@ export default function WordMatcher({}: Props) {
     ));
   };
 
+  const handleStartGame = () => {
+    setIsInstructionsModalOpen(false);
+    setStartGame(true);
+    inputRef.current?.focus();
+  };
+
   return (
     <div className="wordMatchContainer">
+      <div className="gameName">Word Match</div>
       <div className="gameContainer">
         <div className="scoreboard">
           <div className="rowOne">
@@ -256,6 +269,18 @@ export default function WordMatcher({}: Props) {
           />
         </div>
       </div>
+      <Modal
+        isOpen={isInstructionsModalOpen}
+        onClose={() => setIsInstructionsModalOpen(false)}
+        title="Word Match"
+      >
+        <p>Type the displayed words as quickly as you can.</p>
+        <p>Number of letters in each word is your score</p>
+        <p>The game ends when the word grid fills up.</p>
+        <div className="btnContainer">
+          <button onClick={handleStartGame}>Start Game</button>
+        </div>
+      </Modal>
     </div>
   );
 }
