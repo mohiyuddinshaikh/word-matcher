@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./WordMatcher.scss";
 import { generate } from "random-words";
 
@@ -10,6 +10,11 @@ function drawInitialBoard() {
   return Array(9).fill("");
 }
 
+/**
+ * TODO
+ * put logic in a hook
+ */
+
 export default function WordMatcher({}: Props) {
   const [board, setBoard] = useState<string[]>(drawInitialBoard());
   const [score, setScore] = useState<number>(0);
@@ -17,6 +22,8 @@ export default function WordMatcher({}: Props) {
   const [currentWord, setCurrentWord] = useState<string>("");
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [speed, setSpeed] = useState(1);
+
+  const inputRef = useRef<null | HTMLInputElement>(null);
 
   const MAX_SPEED = 3;
 
@@ -43,9 +50,12 @@ export default function WordMatcher({}: Props) {
     };
   }, [isGameOver, speed]);
 
+  useEffect(() => {
+    inputRef?.current?.focus();
+  }, []);
+
   const speedOfWords = () => {
-    const temp = (MAX_SPEED + 1 - speed) * 1000;
-    return temp;
+    return (MAX_SPEED + 1 - speed) * 1000;
   };
 
   function generateWordAndAddToBoard() {
@@ -109,19 +119,27 @@ export default function WordMatcher({}: Props) {
     if (!currentWord) {
       return;
     }
-    if (boardVar.includes(currentWord)) {
+    if (
+      boardVar
+        .map((word) => word.toLowerCase())
+        .includes(currentWord.toLowerCase())
+    ) {
       setBoard((oldBoard) => {
-        const removeIndex = oldBoard.findIndex((item) => item === currentWord);
+        const removeIndex = oldBoard.findIndex(
+          (item) => item.toLowerCase() === currentWord.toLowerCase()
+        );
         const updatedBoard = [...oldBoard];
         updatedBoard[removeIndex] = "";
         boardVar = [...updatedBoard];
         return updatedBoard;
       });
-      setCurrentWord("");
-      setScore((old) => {
-        const newScore = old + 1;
-        calculateSpeed(newScore);
-        return newScore;
+      setCurrentWord((oldCurrentWord) => {
+        setScore((old) => {
+          const newScore = old + oldCurrentWord.length;
+          calculateSpeed(newScore);
+          return newScore;
+        });
+        return "";
       });
     }
   }
@@ -131,10 +149,10 @@ export default function WordMatcher({}: Props) {
       return 3;
     }
     switch (true) {
-      case newScore > 4:
+      case newScore > 70:
         updateSpeed(3);
         break;
-      case newScore > 2:
+      case newScore > 30:
         updateSpeed(2);
         break;
     }
@@ -169,6 +187,28 @@ export default function WordMatcher({}: Props) {
     return board.filter((item) => item != "").length;
   };
 
+  const escapeRegExp = (string: string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  };
+
+  const getHighlightedText = (word: string, input: string) => {
+    const sanitizedInput = escapeRegExp(input);
+    const regex = new RegExp(`(${sanitizedInput})`, "gi");
+    return word.split(regex).map((part, index) => (
+      <span
+        key={index}
+        style={{
+          color:
+            part.toLowerCase() === sanitizedInput.toLowerCase()
+              ? "limegreen"
+              : "white",
+        }}
+      >
+        {part}
+      </span>
+    ));
+  };
+
   return (
     <div className="wordMatchContainer">
       <div className="gameContainer">
@@ -193,12 +233,19 @@ export default function WordMatcher({}: Props) {
           </>
         ) : null}
         <div className="board">
-          {board?.map((boardCell) => {
-            return <div className="boardCell">{boardCell}</div>;
+          {board?.map((boardCell, index) => {
+            return (
+              <div className="boardCell" key={index}>
+                {currentWord
+                  ? getHighlightedText(boardCell, currentWord)
+                  : boardCell}
+              </div>
+            );
           })}
         </div>
         <div className="textBox">
           <input
+            ref={inputRef}
             type="text"
             name="newword"
             onChange={handleAddWord}
